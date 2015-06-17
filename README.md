@@ -4,6 +4,7 @@ Docker image for the Rocky Mountain Summer Workshop on Uncertainty Quantificatio
 This image contains a virtual Ubuntu OS with  the most stable release of FEniCS and BET.
 
 To install Docker:
+
    On Mac OS X or Windows:
       Install boot2docker (http://boot2docker.io/). 
       Launch boot2docker (which will start the Docker daemon).
