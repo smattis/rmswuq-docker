@@ -9,12 +9,12 @@ To install Docker:
       Launch boot2docker (which will start the Docker daemon).
 
    On Linux:
-      Instructions for installation and stargint the Docker daemon for different versions of Linux can be found here: https://docs.docker.com/installation/. 
+      Instructions for installation and starting the Docker daemon for different versions of Linux can be found here: https://docs.docker.com/installation/. 
 
 To get the image (this may take several minutes):
-
-   docker pull smattis/rmswuq-docker
-
+```
+    docker pull smattis/rmswuq-docker
+```
 To launch the container:
 
     docker run -t -i smattis/rmswuq-docker:latest
