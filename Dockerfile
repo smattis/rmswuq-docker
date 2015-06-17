@@ -1,12 +1,5 @@
-# Builds a Docker image with the official FEniCS PPA packages
-#  installed
-#
-# A build of this Dockerfile is maintaned at:
-# https://registry.hub.docker.com/u/fenicsproject/
-#
 # Authors:
-# Lizao Li <lixx1445@umn.edu>
-# Jack S. Hale <jack.hale@uni.lu>
+# Steve Mattis <steve.a.mattis@gmail.com>
 FROM fenicsproject/stable-ppa
 MAINTAINER Steve Mattis
 
