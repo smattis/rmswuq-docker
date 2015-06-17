@@ -13,14 +13,15 @@ To install Docker:
 
 To get the image (this may take several minutes):
 ```
-    docker pull smattis/rmswuq-docker
+docker pull smattis/rmswuq-docker
 ```
 To launch the container:
-
-    docker run -t -i smattis/rmswuq-docker:latest
+```
+docker run -t -i smattis/rmswuq-docker:latest
+```
 
 To share a specified directory from the host with the container:
-
-    docker run -v /absolute/path/to/shared/directory:/home/rmswuq/shared -t -i smattis/rmswuq-docker:latest
-
+```
+docker run -v /absolute/path/to/shared/directory:/home/rmswuq/shared -t -i smattis/rmswuq-docker:latest
+```
 
