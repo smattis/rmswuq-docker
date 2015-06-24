@@ -26,7 +26,7 @@ To share a specified directory from the host with the container:
 docker run -v /absolute/path/to/shared/directory:/home/rmswuq/shared \ 
 -t -i smattis/rmswuq-docker:latest
 ```
-The script `rmswuq` in this repo, is usefuly for running this container. Move the file to the directory in which you want to work and do
+The script `rmswuq` in this repo is usefuly for running this container. Move the file to the directory in which you want to work and do
 ```
 ./rmswuq
 ```
