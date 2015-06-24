@@ -1,11 +1,15 @@
-# Authors:
-# Steve Mattis <steve.a.mattis@gmail.com>
-FROM fenicsproject/stable-ppa
+FROM phusion/baseimage:0.9.16
 MAINTAINER Steve Mattis
 
 # Install dependencies and BET
-RUN apt-get -qq update && \
-    apt-get -qqy install python-pip git emacs && \
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    apt-get autoclean && \
+    apt-get clean && \
+    apt-get -qq update && \
+    apt-get -qqy install python-software-properties && \
+    add-apt-repository -y ppa:fenics-packages/fenics && \
+    apt-get -qq update && \
+    apt-get -qqy install xauth fenics ipython xterm libatlas3gf-base python-pip git emacs && \
     apt-get clean && \
     pip install pyDOE && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -18,6 +22,9 @@ RUN useradd -m -s /bin/bash -G sudo,docker_env rmswuq && \
 
 # See https://github.com/phusion/baseimage-docker/issues/186
 RUN touch /etc/service/syslog-forwarder/down
+
+# Set backend for matplotlibrc to Agg
+RUN  echo "backend : agg" > /etc/matplotlibrc
 
 # This makes sure we launch with ENTRYPOINT /bin/bash into the home directory
 ENV HOME /home/rmswuq
