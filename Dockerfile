@@ -5,9 +5,9 @@ MAINTAINER Steve Mattis
 
 # Install dependencies and BET
 RUN apt-get -qq update && \
-    apt-get -qqy install python-pip git emacs && \
+    apt-get -qqy install build-essential python-pip git emacs openmpi-bin libopenmpi-dev libboost-all-dev gsl-bin libgsl0ldbl libgsl0-dev wget  autotools-dev autoconf make libtool && \
     apt-get clean && \
-    pip install pyDOE && \
+    pip install pyDOE mpi4py && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
@@ -23,10 +23,25 @@ RUN touch /etc/service/syslog-forwarder/down
 ENV HOME /home/rmswuq
 # Install BET
 RUN cd $HOME && \
+    mkdir src && cd src && \	
     git clone https://github.com/UT-CHG/BET.git && \
     cd BET && \
-    python setup.py install 
-RUN chmod -R a+rwx $HOME
+    python setup.py install
+
+# Install QUESO
+RUN cd $HOME/src && \
+    wget https://github.com/libqueso/queso/archive/v0.53.0.tar.gz && \
+    tar xvfz v0.53.0.tar.gz && \
+    rm -r -f  v0.53.0.tar.gz && \
+    cd queso-0.53.0 && \
+    ./bootstrap && \
+    export CC="mpicc" && \
+    export CXX="mpicxx" && \
+    ./configure && \
+    make && \
+    make install 
+    #make check
+#RUN chmod -R a+rwx $HOME
 
      
 ADD WELCOME /home/rmswuq/WELCOME
