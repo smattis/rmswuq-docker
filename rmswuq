@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# User settings
+VERSION=latest              # Valid choices are: stable-ppa, dev-env, dev
+SHAREDDIR=$PWD/shared           # Location of the defaul shared directory
+IMAGE=smattis/rmswuq-docker:$VERSION    # Name of the docker image to use
+PERSISTENT=false                # Is the container persistent? true/false
+CONTAINERNAME="rmswuq-$VERSION" # Default name of the container
+
+#-------------------------------------------------------------------------#
+
+# Tell script to exit on first error
+trap 'exit' ERR
+
+# Test if docker is installed
+if ! hash docker 2>/dev/null; then
+    echo >&2 "Command 'docker' cannot be found on your system. "
+    echo >&2 "Instructions for installing docker on most platforms can be found at:"
+    echo >&2 "          https://docs.docker.com/"
+    echo >&2 "Aborting."
+    exit 1
+fi
+
+# Delete the container after use if not persistent
+if [ "$PERSISTENT" == "true" ]; then
+    RM=""
+else
+    RM="--rm"
+fi
+
+start_gui () {
+    # If we are on Mac OS X and using boot2docker we need to use the
+    # following workaround from
+    # https://github.com/docker/docker/issues/8710 to get X11
+    # forwarding to work.
+    if [ "$(uname)" == "Darwin" ]; then
+	echo >&2 "Warning: X11 forwarding does not work for OS X."
+	echo >&2 "You can run this script without X11 by not passing the -gui option."
+	exit 1
+	 
+	# if hash socat 2> /dev/null ; then
+	#     # I delibrately haven't sunk the output of socat until we
+	#     # understand more about this.
+	#     DISPLAY_ENV=$(boot2docker config | grep HostIP | awk -F \" '{print $2}'):0
+	#     socat TCP-LISTEN:6000,reuseaddr,fork,bind=$DISPLAY_ENV UNIX-CLIENT:\"$DISPLAY\" &
+	#     echo >&2 "Warning: X11 forwarding on Mac OS X is considered experimental!"
+        # else
+	#     echo >&2 "Command 'socat' cannot be found on your system."
+	#     echo >&2 "socat is required for X11 forwarding to work on Mac OS X."
+	#     echo >&2 "Homebrew users can install socat by running:"
+	#     echo >&2 "        brew install socat"
+	#     echo >&2 "You can run this script without X11 by not passing the -gui option."
+	#     echo >&2 "Aborting."
+	#     exit 1
+	# fi
+    else
+        DISPLAY_ENV=$DISPLAY
+    fi
+
+    # Start xhost sharing
+    xhost +local: > /dev/null 2>&1
+    # Run docker
+    if [ "$PERSISTENT" == "true" ]; then
+        if [ -n "$(docker ps -a | grep $CONTAINERNAME)" ]; then
+            # not the first run in the persistent case. just restore
+            docker start $CONTAINERNAME
+            exit 0
+        fi
+    fi
+    # Launch docker container
+    docker run -i -t $RM \
+           -e DISPLAY=$DISPLAY_ENV \
+           -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+           -v $SHAREDDIR:/home/rmswuq/shared \
+           -w="/home/rmswuq" \
+           --name="$CONTAINERNAME" \
+           $IMAGE
+    # End xhost sharing
+    xhost - >/dev/null 2>&1
+}
+
+start_cli () {
+    # Launch docker container
+    docker run -i -t $RM \
+           -v $SHAREDDIR:/home/rmswuq/shared \
+           -w="/home/rmswuq" \
+           --name="$CONTAINERNAME" \
+           $IMAGE
+}
+
+# parse arguments
+if [ "$1" == "-gui" ]; then
+    start_gui
+    exit 0
+else
+    start_cli
+    exit 0
+fi

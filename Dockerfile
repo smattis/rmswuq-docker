@@ -1,6 +1,4 @@
-# Authors:
-# Steve Mattis <steve.a.mattis@gmail.com>
-FROM fenicsproject/stable-ppa
+FROM phusion/baseimage:0.9.16
 MAINTAINER Steve Mattis
 
 # Install dependencies and BET
@@ -18,6 +16,9 @@ RUN useradd -m -s /bin/bash -G sudo,docker_env rmswuq && \
 
 # See https://github.com/phusion/baseimage-docker/issues/186
 RUN touch /etc/service/syslog-forwarder/down
+
+# Set backend for matplotlibrc to Agg
+RUN  echo "backend : agg" > /etc/matplotlibrc
 
 # This makes sure we launch with ENTRYPOINT /bin/bash into the home directory
 ENV HOME /home/rmswuq
