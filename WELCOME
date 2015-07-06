@@ -2,3 +2,7 @@
 
 Welcome to the RMSWUQ demo system!
 
+To copy demos to your shared directory do:
+
+cp -R $HOME/demos $HOME/shared
+
