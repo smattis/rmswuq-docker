@@ -9,7 +9,7 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     apt-get -qqy install python-software-properties && \
     add-apt-repository -y ppa:fenics-packages/fenics && \
     apt-get -qq update && \
-    apt-get -qqy install xauth fenics ipython xterm libatlas3gf-base python-pip git emacs && \
+    apt-get -qqy install xauth fenics ipython xterm libatlas3gf-base python-pip git emacs build-essential openmpi-bin libopenmpi-dev libboost-all-dev gsl-bin libgsl0-dev wget autotools-dev autoconf make libtool && \
     apt-get clean && \
     pip install pyDOE && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -28,13 +28,34 @@ RUN  echo "backend : agg" > /etc/matplotlibrc
 
 # This makes sure we launch with ENTRYPOINT /bin/bash into the home directory
 ENV HOME /home/rmswuq
+RUN mkdir $HOME/src
+
 # Install BET
-RUN cd $HOME && \
+RUN cd $HOME/src && \
     git clone https://github.com/UT-CHG/BET.git && \
     cd BET && \
     python setup.py install 
 RUN chmod -R a+rwx $HOME
 
+# Install QUESO
+RUN cd $HOME/src && \
+    wget https://github.com/libqueso/queso/archive/v0.53.0.tar.gz && \
+    tar xvfz v0.53.0.tar.gz && \
+    rm -r -f  v0.53.0.tar.gz && \
+    cd queso-0.53.0 && \
+    ./bootstrap && \
+    export CC="mpicc" && \
+    export CXX="mpicxx" && \
+    ./configure && \
+    make && \
+    make install
+    #make check
+
+# Add Demos
+RUN mkdir $HOME/demos && \
+    cd $HOME/demos && \
+    cp -R ../src/BET/examples BET-examples && \
+    chmod -R a+rwx $HOME/demos 
      
 ADD WELCOME /home/rmswuq/WELCOME
 RUN cp /home/rmswuq/.bashrc /home/rmswuq/.bashrc.tmp && \
