@@ -58,7 +58,8 @@ RUN mkdir $HOME/demos && \
     chmod -R a+rwx $HOME/demos 
      
 ADD WELCOME /home/rmswuq/WELCOME
-ENV LD_LIBRARY_PATH  /usr/local/lib:/usr/lib
+ENV LD_LIBRARY_PATH  /usr/local/lib:/usr/lib:$LD_LIBRARY_PATH
+
 RUN cp /home/rmswuq/.bashrc /home/rmswuq/.bashrc.tmp && \
     echo "cd $HOME" >> /home/rmswuq/.bashrc.tmp && \
     echo "cat $HOME/WELCOME" >> /home/rmswuq/.bashrc.tmp
