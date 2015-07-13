@@ -6,3 +6,11 @@ To copy demos to your shared directory do:
 
 cp -R $HOME/demos $HOME/shared
 
+To get the error estimation demos do:
+
+git clone https://bitbucket.org/vcarey/rm-workshop.git
+
+Before running QUESO, set up the environment:
+
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:$LD_LIBRARY_PATH
+
